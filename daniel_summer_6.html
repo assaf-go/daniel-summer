@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הקיץ של דניאל 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;900&display=swap');
+
+:root {
+  --sky: #e0f4ff;
+  --sky-mid: #b8e4f9;
+  --sky-deep: #7dcfef;
+  --sun: #FFB800;
+  --sun-dark: #e07b00;
+  --white: #ffffff;
+  --text: #1a3a4a;
+  --text-soft: #5a7a8a;
+  --radius: 14px;
+
+  /* activity colors */
+  --swim:    #0ea5e9;
+  --math:    #8b5cf6;
+  --english: #10b981;
+  --ninja:   #f97316;
+  --scouts:  #6b7280;
+  --skate:   #ef4444;
+  --wix:     #2563eb;
+  --party:   #ec4899;
+  --empty:   rgba(0,0,0,0.05);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Rubik', sans-serif;
+  background: linear-gradient(180deg, #c9eeff 0%, #e8f8ff 30%, #f0fbff 100%);
+  min-height: 100vh;
+  color: var(--text);
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 48px 20px 32px;
+  position: relative;
+}
+.hero-sun {
+  font-size: 72px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 16px rgba(255,180,0,.4));
+  margin-bottom: 10px;
+}
+.hero-title {
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -1px;
+}
+.hero-title span {
+  color: var(--sun-dark);
+}
+.hero-sub {
+  font-size: 16px;
+  color: var(--text-soft);
+  margin-top: 6px;
+}
+
+/* STATS */
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 20px 32px;
+}
+.stat-pill {
+  background: var(--white);
+  border-radius: 40px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-soft);
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.stat-pill strong {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* CALENDAR WRAPPER */
+.cal-wrapper {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* MONTH */
+.month-block {}
+.month-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* WEEK GRID */
+.week-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* DAY HEADERS */
+.day-headers {
+  display: grid;
+  grid-template-columns: 36px repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 2px;
+}
+.day-header {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-soft);
+  padding: 4px 0;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+/* WEEK ROW */
+.week-row {
+  display: grid;
+  grid-template-columns: 36px repeat(7, 1fr);
+  gap: 4px;
+  align-items: stretch;
+}
+.week-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #aac5d0;
+  font-weight: 600;
+}
+
+/* DAY CELL */
+.day-cell {
+  background: var(--white);
+  border-radius: 10px;
+  min-height: 107px;
+  padding: 6px 7px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  transition: box-shadow .15s;
+}
+.day-cell:hover { box-shadow: 0 3px 12px rgba(0,0,0,.1); }
+.day-cell.empty { background: rgba(255,255,255,.35); box-shadow: none; }
+.day-cell.today { box-shadow: 0 0 0 2px var(--sun); }
+
+.day-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+  line-height: 1;
+}
+.day-cell.has-event .day-num { color: var(--text); }
+
+/* ACTIVITY CHIPS */
+.chips { display: flex; flex-direction: column; gap: 2px; }
+.chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 5px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* BLOCK EVENTS */
+.block-overlay {
+  position: relative;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 2;
+  margin-top: 4px;
+}
+
+/* LEGEND */
+.legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(255,255,255,.5);
+  border-radius: 16px;
+  margin-top: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-sun">☀️</div>
+  <div class="hero-title">הקיץ של <span>דניאל</span></div>
+  <div class="hero-sub">יולי – אוגוסט 2026</div>
+</div>
+
+<div class="stats">
+  <div class="stat-pill">📚 <strong>6</strong> ימי בי"ס של הקיץ</div>
+  <div class="stat-pill">🌊 <strong>5</strong> ימי חופש בעין גב</div>
+  <div class="stat-pill">🛼 <strong>14</strong> ימי אקשן על גלגלים</div>
+  <div class="stat-pill">🏕️ <strong>10</strong> ימי קייטנת וויקס</div>
+  <div class="stat-pill">🏊 <strong>8</strong> שיעורי שחייה</div>
+</div>
+
+<div class="cal-wrapper" id="calWrapper"></div>
+
+<script>
+const DAYS_HE = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+// Sunday=0 in JS → we want Sun first: א׳=Sun, ב׳=Mon ... ש׳=Sat
+// RTL calendar: we'll show Sun→Sat left to right (visual RTL handled by CSS dir)
+
+const C = {
+  swim:    '#0ea5e9',
+  math:    '#8b5cf6',
+  english: '#10b981',
+  ninja:   '#f97316',
+  scouts:  '#6b7280',
+  skate:   '#ef4444',
+  wix:     '#2563eb',
+  party:   '#ec4899',
+  school:  '#f59e0b',
+  vacation:'#14b8a6',
+};
+
+// All events: {date: 'YYYY-MM-DD', label, color, isBlock?}
+// Block events: {from, to, label, color}
+const BLOCK_EVENTS = [
+  { from:'2026-07-08', to:'2026-07-12', label:'🌊 חופש בעין גב', color: C.vacation },
+  { from:'2026-07-21', to:'2026-08-03', label:'🛼 אקשן על גלגלים', color: C.skate, skipWeekends: true },
+  { from:'2026-08-09', to:'2026-08-13', label:'🏕️ קייטנת וויקס – עמוס עוז', color: C.wix },
+  { from:'2026-08-16', to:'2026-08-20', label:'🏕️ קייטנת וויקס – גלגלים', color:'#0891b2' },
+];
+
+// Single-day / recurring events
+const SINGLE_EVENTS = [
+  // בי"ס של הקיץ: Sundays & Wednesdays 1.7–21.7
+  { date:'2026-07-01', label:'📚 בי"ס של הקיץ', color: C.school },
+  { date:'2026-07-05', label:'📚 בי"ס של הקיץ', color: C.school },
+  { date:'2026-07-08', label:'📚 בי"ס של הקיץ', color: C.school },
+  { date:'2026-07-12', label:'📚 בי"ס של הקיץ', color: C.school },
+  { date:'2026-07-15', label:'📚 בי"ס של הקיץ', color: C.school },
+  { date:'2026-07-19', label:'📚 בי"ס של הקיץ', color: C.school },
+  // July recurring swim (Wednesdays) — 8.7 removed
+  { date:'2026-07-01', label:'🏊 שחייה',   color: C.swim },
+  { date:'2026-07-15', label:'🏊 שחייה',   color: C.swim },
+  { date:'2026-07-22', label:'🏊 שחייה',   color: C.swim },
+  { date:'2026-07-29', label:'🏊 שחייה',   color: C.swim },
+  { date:'2026-08-05', label:'🏊 שחייה',   color: C.swim },
+  { date:'2026-08-12', label:'🏊 שחייה',   color: C.swim },
+  { date:'2026-08-19', label:'🏊 שחייה',   color: C.swim },
+  { date:'2026-08-26', label:'🏊 שחייה',   color: C.swim },
+  // Math Sundays
+  { date:'2026-07-05', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-07-12', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-07-19', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-07-26', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-08-02', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-08-09', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-08-16', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-08-23', label:'🧮 מתמטיקה', color: C.math },
+  { date:'2026-08-30', label:'🧮 מתמטיקה', color: C.math },
+  // Ninja Mondays
+  { date:'2026-07-06', label:'🥷 נינג׳ה',  color: C.ninja },
+  { date:'2026-07-13', label:'🥷 נינג׳ה',  color: C.ninja },
+  { date:'2026-07-20', label:'🥷 נינג׳ה',  color: C.ninja },
+  { date:'2026-08-03', label:'🥷 נינג׳ה',  color: C.ninja },
+  { date:'2026-08-10', label:'🥷 נינג׳ה',  color: C.ninja },
+  { date:'2026-08-17', label:'🥷 נינג׳ה',  color: C.ninja },
+  { date:'2026-08-24', label:'🥷 נינג׳ה',  color: C.ninja },
+  { date:'2026-08-31', label:'🥷 נינג׳ה',  color: C.ninja },
+  // English Mondays
+  { date:'2026-07-06', label:'🇬🇧 אנגלית', color: C.english },
+  { date:'2026-07-13', label:'🇬🇧 אנגלית', color: C.english },
+  { date:'2026-07-20', label:'🇬🇧 אנגלית', color: C.english },
+  { date:'2026-08-03', label:'🇬🇧 אנגלית', color: C.english },
+  { date:'2026-08-10', label:'🇬🇧 אנגלית', color: C.english },
+  { date:'2026-08-17', label:'🇬🇧 אנגלית', color: C.english },
+  { date:'2026-08-24', label:'🇬🇧 אנגלית', color: C.english },
+  { date:'2026-08-31', label:'🇬🇧 אנגלית', color: C.english },
+  // Scouts Fridays + Tuesdays
+  { date:'2026-07-03', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-07-07', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-07-10', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-07-14', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-07-17', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-07-24', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-07-28', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-07-31', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-04', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-07', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-11', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-14', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-18', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-21', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-25', label:'⚜️ צופים',   color: C.scouts },
+  { date:'2026-08-28', label:'⚜️ צופים',   color: C.scouts },
+  // Party
+  { date:'2026-07-17', label:'🎉 מסיבת בריכה ד1', color: C.party },
+];
+
+// Build lookup
+const singleMap = {};
+SINGLE_EVENTS.forEach(e => {
+  if (!singleMap[e.date]) singleMap[e.date] = [];
+  singleMap[e.date].push(e);
+});
+
+// Build block date range lookup
+// For blocks with skipWeekends=true, Fri(5) and Sat(6) are excluded from coloring
+const blockMap = {};
+BLOCK_EVENTS.forEach(blk => {
+  let d = new Date(blk.from + 'T12:00:00');
+  const end = new Date(blk.to + 'T12:00:00');
+  // collect active days first (respecting skipWeekends)
+  const activeDays = [];
+  let cur = new Date(d);
+  while (cur <= end) {
+    const dow = cur.getDay(); // 0=Sun,6=Sat
+    if (!blk.skipWeekends || (dow !== 5 && dow !== 6)) {
+      activeDays.push(cur.toISOString().slice(0,10));
+    }
+    cur.setDate(cur.getDate()+1);
+  }
+  activeDays.forEach((key, idx) => {
+    const isFirst = idx === 0;
+    const isLast  = idx === activeDays.length - 1;
+    const pos = isFirst && isLast ? 'solo' : isFirst ? 'start' : isLast ? 'end' : 'mid';
+    blockMap[key] = { label: blk.label, color: blk.color, pos, isFirst };
+  });
+});
+
+function isoDate(d) {
+  return d.toISOString().slice(0,10);
+}
+
+function buildMonth(year, month, title, emoji) {
+  const monthDiv = document.createElement('div');
+  monthDiv.className = 'month-block';
+
+  const mTitle = document.createElement('div');
+  mTitle.className = 'month-title';
+  mTitle.textContent = emoji + ' ' + title;
+  monthDiv.appendChild(mTitle);
+
+  const grid = document.createElement('div');
+  grid.className = 'week-grid';
+
+  // Day headers
+  const headers = document.createElement('div');
+  headers.className = 'day-headers';
+  const blankH = document.createElement('div');
+  headers.appendChild(blankH);
+  // Sun→Sat
+  ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'].forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'day-header';
+    h.textContent = d;
+    headers.appendChild(h);
+  });
+  grid.appendChild(headers);
+
+  // First day of month
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month+1, 0);
+  const startDow = firstDay.getDay(); // 0=Sun
+  const today = isoDate(new Date());
+
+  let weekNum = 1;
+  let currentDay = 1 - startDow; // may be negative (days before month start)
+
+  while (currentDay <= lastDay.getDate()) {
+    const row = document.createElement('div');
+    row.className = 'week-row';
+
+    const wn = document.createElement('div');
+    wn.className = 'week-num';
+    wn.textContent = 'S' + weekNum;
+    row.appendChild(wn);
+
+    for (let dow = 0; dow < 7; dow++) {
+      const cell = document.createElement('div');
+      const dayNum = currentDay + dow;
+
+      if (dayNum < 1 || dayNum > lastDay.getDate()) {
+        cell.className = 'day-cell empty';
+        row.appendChild(cell);
+        continue;
+      }
+
+      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`;
+      const singles = singleMap[dateStr] || [];
+      const block   = blockMap[dateStr];
+
+      cell.className = 'day-cell' + (singles.length || block ? ' has-event' : '');
+      if (dateStr === today) cell.classList.add('today');
+
+      const dn = document.createElement('div');
+      dn.className = 'day-num';
+      dn.textContent = dayNum;
+      cell.appendChild(dn);
+
+      // Block event overlay — sits BELOW the date number via margin-top
+      if (block) {
+        const ov = document.createElement('div');
+        ov.className = 'block-overlay';
+        const r = '8px';
+        const showLabel = block.pos === 'start' || block.pos === 'solo' || dow === 0;
+        if (block.pos === 'start' || block.pos === 'solo') {
+          ov.style.cssText = `background:${block.color};border-radius:${r} 0 0 ${r};margin-right:-7px;margin-left:0`;
+        } else if (block.pos === 'end') {
+          ov.style.cssText = `background:${block.color};border-radius:0 ${r} ${r} 0;margin-left:-7px;margin-right:0`;
+        } else {
+          if (dow === 0) {
+            ov.style.cssText = `background:${block.color};border-radius:${r} 0 0 ${r};margin-right:-7px;margin-left:0`;
+          } else if (dow === 6) {
+            ov.style.cssText = `background:${block.color};border-radius:0 ${r} ${r} 0;margin-left:-7px;margin-right:0`;
+          } else {
+            ov.style.cssText = `background:${block.color};margin-left:-7px;margin-right:-7px;border-radius:0`;
+          }
+        }
+        // position it below the date number, not overlapping
+        ov.style.position = 'relative';
+        ov.style.marginTop = '4px';
+        ov.style.top = 'auto';
+        ov.style.left = 'auto';
+        ov.style.right = 'auto';
+        if (showLabel) ov.textContent = block.label;
+        cell.appendChild(ov);
+      }
+
+      // Single chips
+      if (singles.length) {
+        const chips = document.createElement('div');
+        chips.className = 'chips';
+        singles.slice(0,3).forEach(s => {
+          const ch = document.createElement('div');
+          ch.className = 'chip';
+          ch.style.background = s.color;
+          ch.textContent = s.label;
+          chips.appendChild(ch);
+        });
+        if (singles.length > 3) {
+          const more = document.createElement('div');
+          more.className = 'chip';
+          more.style.background = '#94a3b8';
+          more.textContent = `+${singles.length-3}`;
+          chips.appendChild(more);
+        }
+        cell.appendChild(chips);
+      }
+
+      row.appendChild(cell);
+    }
+
+    grid.appendChild(row);
+    currentDay += 7;
+    weekNum++;
+    if (currentDay > lastDay.getDate()) break;
+  }
+
+  monthDiv.appendChild(grid);
+  return monthDiv;
+}
+
+const wrapper = document.getElementById('calWrapper');
+wrapper.appendChild(buildMonth(2026, 6, 'יולי', '🌊'));
+wrapper.appendChild(buildMonth(2026, 7, 'אוגוסט', '🏆'));
+
+// Legend
+const legend = document.createElement('div');
+legend.className = 'legend';
+const items = [
+  ['📚 בי"ס של הקיץ', C.school],
+  ['🌊 חופש בעין גב', C.vacation],
+  ['🛼 אקשן על גלגלים', C.skate],
+  ['🏕️ קייטנת וויקס', C.wix],
+  ['🏊 שחייה', C.swim],
+  ['🧮 מתמטיקה', C.math],
+  ['🇬🇧 אנגלית', C.english],
+  ['🥷 נינג׳ה', C.ninja],
+  ['⚜️ צופים', C.scouts],
+  ['🎉 חגיגה', C.party],
+];
+items.forEach(([label, color]) => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  item.innerHTML = `<div class="legend-dot" style="background:${color}"></div>${label}`;
+  legend.appendChild(item);
+});
+wrapper.appendChild(legend);
+</script>
+</body>
+</html>
